@@ -1,0 +1,43 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: starnight-reactor
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/starnight
+    username: postgres
+    password: 123456
+  data:
+    # Redis
+    redis:
+      host: localhost
+      port: 6379
+      password: 123456
+      database: 1
+  # 时间戳统一转换
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  # 文件上传大小限制
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+# r2dbc 日志
+logging:
+  level:
+    org:
+      springframework:
+        r2dbc: DEBUG
+
+# star-night 配置
+starnight:
+  # security
+  security:
+    ignores:
+      - /user/login/**
+      - /user/logout/**
+      - /user/register/**

@@ -1,0 +1,106 @@
+package com.tracejp.starnight.reactor.entity;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
+import java.util.Date;
+
+/**
+ * @author traceJP
+ * @since 2023-05-20 23:37:41
+ */
+@Data
+@Accessors(chain = true)
+@Table("t_exam_paper_question_answer")
+public class ExamPaperQuestionAnswerEntity {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 自增id
+     */
+    @Id
+    private Long id;
+
+    /**
+     * 创建时间
+     */
+    @CreatedDate
+    private Date createTime;
+
+    /**
+     * 创建者id（做题人）
+     */
+    private Long createBy;
+
+    /**
+     * 题目id
+     */
+    private Long questionId;
+
+    /**
+     * 试卷id
+     */
+    private Long examPaperId;
+
+    /**
+     * 试卷答案id
+     */
+    private Long examPaperAnswerId;
+
+    /**
+     * 题型
+     */
+    private Integer questionType;
+
+    /**
+     * 学科id
+     */
+    private Long subjectId;
+
+    /**
+     * 做题人得分
+     */
+    private Integer customerScore;
+
+    /**
+     * 题目原始分数
+     */
+    private Integer questionScore;
+
+    /**
+     * 问题内容
+     */
+    private Long questionTextContentId;
+
+    /**
+     * 做题人答案 - 单选、多选、判断
+     * 参考 QuestionTypeEnum#needSaveTextContent
+     */
+    private String answer;
+
+    /**
+     * 做题人答案图片 - 简答
+     */
+    private String answerImage;
+
+    /**
+     * 做题人答案 - 填空、简答
+     * 参考 QuestionTypeEnum#needSaveTextContent
+     */
+    private Long textContentId;
+
+    /**
+     * 是否正确
+     */
+    private Boolean doRight;
+
+    /**
+     * 排序字段
+     */
+    private Integer itemOrder;
+
+}
