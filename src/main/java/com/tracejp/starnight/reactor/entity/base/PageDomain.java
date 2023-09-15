@@ -13,7 +13,7 @@ import java.util.List;
  * @since 2023/9/14 10:31
  */
 @Data
-public class PageResult<T> {
+public class PageDomain<T> {
 
     /**
      * 当前页码
@@ -35,7 +35,7 @@ public class PageResult<T> {
      */
     private final List<T> items;
 
-    public PageResult(int page, int size, long total, List<T> items) {
+    public PageDomain(int page, int size, long total, List<T> items) {
         Assert.isTrue(total >= 0, "Total elements must be greater than or equal to 0");
         if (page < 0) page = 0;
         if (size < 0) size = 0;

@@ -1,6 +1,6 @@
 package com.tracejp.starnight.reactor.service.impl;
 
-import com.tracejp.starnight.reactor.entity.base.PageResult;
+import com.tracejp.starnight.reactor.entity.base.PageDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public abstract class BaseService<Dao extends R2dbcRepository<Domain, Long>, Dom
     /**
      * 查询分页数据 - 手动分页
      */
-    public Mono<PageResult<Domain>> findPage(Domain entity, int page, int size) {
+    public Mono<PageDomain<Domain>> findPage(Domain entity, int page, int size) {
         var list = findList(entity);
         var count = list.count();
         if (page > 0) {
@@ -65,7 +65,7 @@ public abstract class BaseService<Dao extends R2dbcRepository<Domain, Long>, Dom
                 .map(tuple -> {
                     var content = tuple.getT1();
                     var total = tuple.getT2();
-                    return new PageResult<>(page, size, total, content);
+                    return new PageDomain<>(page, size, total, content);
                 });
     }
 

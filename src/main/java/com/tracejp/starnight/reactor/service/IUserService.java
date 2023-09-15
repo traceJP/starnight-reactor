@@ -1,7 +1,7 @@
 package com.tracejp.starnight.reactor.service;
 
 import com.tracejp.starnight.reactor.entity.UserEntity;
-import com.tracejp.starnight.reactor.entity.base.PageResult;
+import com.tracejp.starnight.reactor.entity.base.PageDomain;
 import reactor.core.publisher.Mono;
 
 /**
@@ -12,6 +12,16 @@ import reactor.core.publisher.Mono;
  */
 public interface IUserService {
 
-    Mono<PageResult<UserEntity>> findPage(int pageNum, int pageSize);
+    Mono<PageDomain<UserEntity>> findPage(int pageNum, int pageSize);
+
+    /**
+     * 通过用户名查询用户实体
+     */
+    Mono<UserEntity> findByUserName(String username);
+
+    /**
+     * 通过用户ID修改用户实体
+     */
+    Mono<UserEntity> updateById(UserEntity user);
 
 }

@@ -24,35 +24,35 @@ public abstract class BaseController implements IRouteEndpoint {
      * 返回成功
      */
     public Mono<ServerResponse> success() {
-        return R.ok("操作成功").flatMap(ServerResponse.ok()::bodyValue);
+        return Mono.just(R.ok("操作成功")).flatMap(ServerResponse.ok()::bodyValue);
     }
 
     /**
      * 返回成功对象
      */
     protected Mono<ServerResponse> success(Object data) {
-        return R.ok(data).flatMap(ServerResponse.ok()::bodyValue);
+        return Mono.just(R.ok(data)).flatMap(ServerResponse.ok()::bodyValue);
     }
 
     /**
      * 返回成功消息
      */
     public Mono<ServerResponse> success(String message) {
-        return R.ok(message).flatMap(ServerResponse.ok()::bodyValue);
+        return Mono.just(R.ok(message)).flatMap(ServerResponse.ok()::bodyValue);
     }
 
     /**
      * 返回失败
      */
     public Mono<ServerResponse> error() {
-        return R.fail("操作失败").flatMap(ServerResponse.ok()::bodyValue);
+        return Mono.just(R.fail("操作失败")).flatMap(ServerResponse.ok()::bodyValue);
     }
 
     /**
      * 返回失败消息
      */
     public Mono<ServerResponse> error(String message) {
-        return R.fail(message).flatMap(ServerResponse.ok()::bodyValue);
+        return Mono.just(R.fail(message)).flatMap(ServerResponse.ok()::bodyValue);
     }
 
 }

@@ -38,6 +38,6 @@ starnight:
   # security
   security:
     ignores:
-      - /user/login/**
-      - /user/logout/**
-      - /user/register/**
+      - /api/user/login/**
+      - /api/user/logout/**
+      - /api/user/register/**

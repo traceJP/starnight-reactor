@@ -2,11 +2,11 @@ package com.tracejp.starnight.reactor.utils;
 
 
 import cn.hutool.core.convert.Convert;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
 import com.tracejp.starnight.reactor.constants.SecurityConstants;
 import com.tracejp.starnight.reactor.constants.TokenConstants;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.util.Map;
 
@@ -18,6 +18,8 @@ import java.util.Map;
 public class JwtUtils {
     public static String secret = TokenConstants.SECRET;
 
+    public static String userInfo = TokenConstants.USER_INFO;
+
     /**
      * 从数据声明生成令牌
      *
@@ -25,7 +27,7 @@ public class JwtUtils {
      * @return 令牌
      */
     public static String createToken(Map<String, Object> claims) {
-        return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).compact();
+        return JWT.create().withClaim(userInfo, claims).sign(Algorithm.HMAC256(secret));
     }
 
     /**
@@ -34,8 +36,9 @@ public class JwtUtils {
      * @param token 令牌
      * @return 数据声明
      */
-    public static Claims parseToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    public static Claim parseToken(String token) {
+        return JWT.require(Algorithm.HMAC256(secret)).build().verify(token)
+                .getClaim(userInfo);
     }
 
     /**
@@ -45,8 +48,8 @@ public class JwtUtils {
      * @return 用户ID
      */
     public static String getUserKey(String token) {
-        Claims claims = parseToken(token);
-        return getValue(claims, SecurityConstants.USER_KEY);
+        Claim claim = parseToken(token);
+        return getValue(claim, SecurityConstants.USER_KEY);
     }
 
     /**
@@ -55,7 +58,7 @@ public class JwtUtils {
      * @param claims 身份信息
      * @return 用户ID
      */
-    public static String getUserKey(Claims claims) {
+    public static String getUserKey(Claim claims) {
         return getValue(claims, SecurityConstants.USER_KEY);
     }
 
@@ -66,7 +69,7 @@ public class JwtUtils {
      * @return 用户ID
      */
     public static String getUserId(String token) {
-        Claims claims = parseToken(token);
+        Claim claims = parseToken(token);
         return getValue(claims, SecurityConstants.DETAILS_USER_ID);
     }
 
@@ -76,7 +79,7 @@ public class JwtUtils {
      * @param claims 身份信息
      * @return 用户ID
      */
-    public static String getUserId(Claims claims) {
+    public static String getUserId(Claim claims) {
         return getValue(claims, SecurityConstants.DETAILS_USER_ID);
     }
 
@@ -87,7 +90,7 @@ public class JwtUtils {
      * @return 用户名
      */
     public static String getUserName(String token) {
-        Claims claims = parseToken(token);
+        Claim claims = parseToken(token);
         return getValue(claims, SecurityConstants.DETAILS_USERNAME);
     }
 
@@ -97,7 +100,7 @@ public class JwtUtils {
      * @param claims 身份信息
      * @return 用户名
      */
-    public static String getUserName(Claims claims) {
+    public static String getUserName(Claim claims) {
         return getValue(claims, SecurityConstants.DETAILS_USERNAME);
     }
 
@@ -108,8 +111,8 @@ public class JwtUtils {
      * @param key    键
      * @return 值
      */
-    public static String getValue(Claims claims, String key) {
-        return Convert.toStr(claims.get(key), "");
+    public static String getValue(Claim claims, String key) {
+        return Convert.toStr(claims.asMap().get(key), "");
     }
 
 }

@@ -2,7 +2,6 @@ package com.tracejp.starnight.reactor.entity.base;
 
 import com.tracejp.starnight.reactor.constants.Constants;
 import lombok.Data;
-import reactor.core.publisher.Mono;
 
 /**
  * <p> Controller 统一返回包装对象 <p/>
@@ -47,40 +46,40 @@ public class R<T> {
     }
 
 
-    public static <T> Mono<R<T>> ok() {
+    public static <T> R<T> ok() {
         return restResult(null, SUCCESS, null);
     }
 
-    public static <T> Mono<R<T>> ok(T data) {
+    public static <T> R<T> ok(T data) {
         return restResult(data, SUCCESS, null);
     }
 
-    public static <T> Mono<R<T>> ok(T data, String msg) {
+    public static <T> R<T> ok(T data, String msg) {
         return restResult(data, SUCCESS, msg);
     }
 
-    public static <T> Mono<R<Object>> fail() {
+    public static <T> R<T> fail() {
         return restResult(null, FAIL, null);
     }
 
-    public static <T> Mono<R<T>> fail(String msg) {
+    public static <T> R<T> fail(String msg) {
         return restResult(null, FAIL, msg);
     }
 
-    public static <T> Mono<R<T>> fail(T data) {
+    public static <T> R<T> fail(T data) {
         return restResult(data, FAIL, null);
     }
 
-    public static <T> Mono<R<T>> fail(T data, String msg) {
+    public static <T> R<T> fail(T data, String msg) {
         return restResult(data, FAIL, msg);
     }
 
-    public static <T> Mono<R<T>> fail(int code, String msg) {
+    public static <T> R<T> fail(int code, String msg) {
         return restResult(null, code, msg);
     }
 
-    private static <T> Mono<R<T>> restResult(T data, int code, String msg) {
-        return Mono.justOrEmpty(new R<>(code, msg, data));
+    private static <T> R<T> restResult(T data, int code, String msg) {
+        return new R<>(code, msg, data);
     }
 
     public static <T> Boolean isError(R<T> ret) {

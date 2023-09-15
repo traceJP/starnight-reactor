@@ -22,4 +22,8 @@ public class TokenConstants {
      */
     public final static String SECRET = "abcdefghijklmnopqrstuvwxyz";
 
+    /**
+     * Claims中用户信息的key
+     */
+    public static final String USER_INFO = "userInfo";
 }

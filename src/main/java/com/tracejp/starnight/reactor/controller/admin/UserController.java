@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
  * @since 2023/9/13 9:08
  */
 @RequiredArgsConstructor
-@RestController
+@RestController("adminUserController")
 public class UserController extends BaseController {
 
     private final IUserService userService;

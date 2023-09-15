@@ -46,16 +46,16 @@
         </dependency>
 
         <!-- spring security -->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-security</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
 
         <!-- Jwt -->
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.10.1</version>
         </dependency>
 
         <!-- ************************************* tools ************************************* -->
@@ -92,8 +92,8 @@
         <!-- JSON 解析器和生成器 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <version>2.0.25</version>
+            <artifactId>fastjson2-extension-spring6</artifactId>
+            <version>2.0.23</version>
         </dependency>
 
         <!-- Apache Lang3 -->
