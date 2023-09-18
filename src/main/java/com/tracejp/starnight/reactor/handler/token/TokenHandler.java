@@ -3,16 +3,15 @@ package com.tracejp.starnight.reactor.handler.token;
 
 import com.tracejp.starnight.reactor.constants.SecurityConstants;
 import com.tracejp.starnight.reactor.entity.base.LoginUser;
-import com.tracejp.starnight.reactor.utils.IdUtils;
-import com.tracejp.starnight.reactor.utils.JwtUtils;
-import com.tracejp.starnight.reactor.utils.RedisUtils;
-import com.tracejp.starnight.reactor.utils.StringUtils;
+import com.tracejp.starnight.reactor.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,38 +52,30 @@ public class TokenHandler {
         return Mono.just(rspMap);
     }
 
-//    /**
-//     * 获取用户身份信息
-//     */
-//    public LoginUser getLoginUser() {
-//        return getLoginUser(ServletUtils.getRequest());
-//    }
-//
-//    /**
-//     * 获取用户身份信息
-//     */
-//    public LoginUser getLoginUser(HttpServletRequest request) {
-//        // 获取请求携带的令牌
-//        String token = SecurityUtils.getToken(request);
-//        return getLoginUser(token);
-//    }
+    /**
+     * 获取用户身份信息
+     */
+    public Mono<LoginUser> getLoginUser(ServerHttpRequest request) {
+        // 获取请求携带的令牌
+        String token = SecurityUtils.getToken(request);
+        return getLoginUser(token);
+    }
 
     /**
      * 获取用户身份信息
      *
      * @return 用户信息
      */
-    public LoginUser getLoginUser(String token) {
-        LoginUser user;
+    public Mono<LoginUser> getLoginUser(String token) {
         try {
             if (StringUtils.isNotEmpty(token)) {
-                String userkey = JwtUtils.getUserKey(token);
-                user = redisUtils.getCacheObject(getTokenKey(userkey));
-                return user;
+                var userKey = JwtUtils.getUserKey(token);
+                return redisUtils.getCacheObject(getTokenKey(userKey))
+                        .cast(LoginUser.class);
             }
         } catch (Exception ignored) {
         }
-        return null;
+        return Mono.empty();
     }
 
     /**

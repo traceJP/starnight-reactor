@@ -159,7 +159,7 @@ CREATE TABLE "public"."t_exam_paper" (
   "frame_text_content_id" int4,
   "create_user" int4,
   "create_time" timestamp(6),
-  "deleted" bool,
+  "del_flag" bool,
   "task_exam_id" int4
 )
 ;
@@ -279,7 +279,7 @@ CREATE TABLE "public"."t_question" (
   "create_user" int4,
   "status" int4,
   "create_time" timestamp(6),
-  "deleted" bool
+  "del_flag" bool
 )
 ;
 
@@ -297,7 +297,7 @@ CREATE TABLE "public"."t_subject" (
   "level" int4,
   "level_name" varchar(255) COLLATE "pg_catalog"."default",
   "item_order" int4,
-  "deleted" bool
+  "del_flag" bool
 )
 ;
 
@@ -318,7 +318,7 @@ CREATE TABLE "public"."t_task_exam" (
   "create_user" int4,
   "create_user_name" varchar(255) COLLATE "pg_catalog"."default",
   "create_time" timestamp(6),
-  "deleted" bool
+  "del_flag" bool
 )
 ;
 
@@ -364,7 +364,7 @@ CREATE TABLE "public"."t_text_content" (
 DROP TABLE IF EXISTS "public"."t_user";
 CREATE TABLE "public"."t_user" (
   "id" int4 NOT NULL DEFAULT nextval('t_user_id_seq'::regclass),
-  "user_uuid" uuid,
+  "user_uuid" varchar(255) COLLATE "pg_catalog"."default",
   "user_name" varchar(255) COLLATE "pg_catalog"."default",
   "password" varchar(255) COLLATE "pg_catalog"."default",
   "real_name" varchar(255) COLLATE "pg_catalog"."default",
@@ -375,11 +375,11 @@ CREATE TABLE "public"."t_user" (
   "phone" varchar(255) COLLATE "pg_catalog"."default",
   "role" int4,
   "status" int4,
-  "image_path" varchar(255) COLLATE "pg_catalog"."default",
+  "avatar_path" varchar(255) COLLATE "pg_catalog"."default",
   "create_time" timestamp(6),
-  "modify_time" timestamp(6),
+  "update_time" timestamp(6),
   "last_active_time" timestamp(6),
-  "deleted" bool,
+  "del_flag" bool,
   "wx_open_id" varchar COLLATE "pg_catalog"."default"
 )
 ;

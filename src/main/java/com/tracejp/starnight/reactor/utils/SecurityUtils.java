@@ -4,8 +4,9 @@ package com.tracejp.starnight.reactor.utils;
 import com.tracejp.starnight.reactor.constants.TokenConstants;
 import com.tracejp.starnight.reactor.entity.base.LoginUser;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import reactor.core.publisher.Mono;
 
 /**
  * 权限获取工具类
@@ -17,29 +18,31 @@ public class SecurityUtils {
     /**
      * 获取用户ID
      */
-    public static Long getUserId() {
-        return getLoginUser().getUserid();
+    public static Mono<Long> getUserId() {
+        return getLoginUser().map(LoginUser::getUserid);
     }
 
     /**
      * 获取用户名称
      */
-    public static String getUsername() {
-        return getLoginUser().getUsername();
+    public static Mono<String> getUsername() {
+        return getLoginUser().map(LoginUser::getUsername);
     }
 
     /**
      * 获取用户key
      */
-    public static String getUserToken() {
-        return getLoginUser().getToken();
+    public static Mono<String> getUserToken() {
+        return getLoginUser().map(LoginUser::getToken);
     }
 
     /**
      * 获取登录用户信息
      */
-    public static LoginUser getLoginUser() {
-        return (LoginUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    public static Mono<LoginUser> getLoginUser() {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(context -> context.getAuthentication().getDetails())
+                .cast(LoginUser.class);
     }
 
     /**

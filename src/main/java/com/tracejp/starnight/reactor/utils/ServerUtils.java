@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 
 import java.net.URLDecoder;
@@ -93,8 +92,9 @@ public class ServerUtils {
 
     /**
      * 获得指定请求头参数
+     *
      * @param request 请求对象{@link ServerHttpRequest}
-     * @param name 参数名 Key
+     * @param name    参数名 Key
      * @return String
      */
     public static String getHeader(ServerHttpRequest request, String name) {
@@ -107,6 +107,7 @@ public class ServerUtils {
 
     /**
      * 获取请求头参数集合
+     *
      * @param request 请求对象{@link ServerHttpRequest}
      * @return Map
      */

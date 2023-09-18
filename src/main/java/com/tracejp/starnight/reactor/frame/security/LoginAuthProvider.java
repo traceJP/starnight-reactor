@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p> 认证 <p/>
@@ -63,11 +64,7 @@ public class LoginAuthProvider implements ReactiveAuthenticationManager {
 
             // 登录成功
             user.setLastActiveTime(LocalDateTime.now());
-
-            return buildToken(user);
-
-            // TODO 更新语句有问题
-//            return userService.updateById(user).flatMap(this::buildToken);
+            return userService.updateById(user).flatMap(this::buildToken);
         });
     }
 

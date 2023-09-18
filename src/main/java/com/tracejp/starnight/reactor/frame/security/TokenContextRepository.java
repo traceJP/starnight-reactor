@@ -1,19 +1,17 @@
 package com.tracejp.starnight.reactor.frame.security;
 
-import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.base.LoginUser;
 import com.tracejp.starnight.reactor.entity.enums.RoleEnum;
-import com.tracejp.starnight.reactor.exception.ServiceException;
 import com.tracejp.starnight.reactor.handler.token.TokenHandler;
 import com.tracejp.starnight.reactor.utils.SecurityUtils;
 import com.tracejp.starnight.reactor.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -36,13 +34,17 @@ public class TokenContextRepository implements ServerSecurityContextRepository {
 
     @Override
     public Mono<Void> save(ServerWebExchange exchange, SecurityContext context) {
+        System.out.println("这里 执行了！！！");
         return Mono.empty();
     }
 
     @Override
     public Mono<SecurityContext> load(ServerWebExchange exchange) {
-        ServerHttpRequest request = exchange.getRequest();
-        String token = SecurityUtils.getToken(request);
+
+//        System.out.println("这里执行力！！！");
+
+        var request = exchange.getRequest();
+        var token = SecurityUtils.getToken(request);
 
         // 匿名请求
         if (StringUtils.isEmpty(token)) {
@@ -50,25 +52,21 @@ public class TokenContextRepository implements ServerSecurityContextRepository {
         }
 
         // token 验证
-        LoginUser loginUser = tokenHandler.getLoginUser(token);
-        if (loginUser != null) {
-            // 存放 token 信息到 security
-            UsernamePasswordAuthenticationToken authToken = buildToken(loginUser);
-            SecurityContextHolder.getContext().setAuthentication(authToken);
-            return Mono.just(SecurityContextHolder.getContext());
-        }
-
-        return Mono.error(new ServiceException("登录过期"));
+        return tokenHandler.getLoginUser(token).flatMap(loginUser -> {
+            var authToken = buildToken(loginUser);
+            ReactiveSecurityContextHolder.withAuthentication(authToken);
+            return Mono.just(new SecurityContextImpl(buildToken(loginUser)));
+        });
     }
 
     /**
      * 构建 security 用户实体
      */
     private UsernamePasswordAuthenticationToken buildToken(LoginUser loginUser) {
-        UserEntity user = loginUser.getUser();
+        var user = loginUser.getUser();
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(RoleEnum.fromCode(user.getRole()).getRoleName()));
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+        var authToken = new UsernamePasswordAuthenticationToken(
                 user.getUserName(), user.getPassword(), grantedAuthorities
         );
         authToken.setDetails(loginUser);

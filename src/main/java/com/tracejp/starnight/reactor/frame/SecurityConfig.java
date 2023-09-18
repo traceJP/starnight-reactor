@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .logout(ServerHttpSecurity.LogoutSpec::disable)
                 .headers(item -> item.frameOptions(ServerHttpSecurity.HeaderSpec.FrameOptionsSpec::disable))
                 .securityContextRepository(tokenContextRepository)
+//                .authorizeExchange(auth -> auth.anyExchange().permitAll())  // 测试放行
                 .authorizeExchange(auth -> auth
                         // 白名单接口放行
                         .pathMatchers(securityIgnoreUrls.toArray(new String[0])).permitAll()
