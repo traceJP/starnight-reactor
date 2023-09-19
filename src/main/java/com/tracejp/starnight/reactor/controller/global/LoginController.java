@@ -43,7 +43,10 @@ public class LoginController extends BaseController {
                 .flatMap(loginParam -> authorizationManager.authenticate(loginParam.getAuthenticationToken()))
                 .map(Authentication::getDetails)
                 .cast(LoginUser.class)
-                // TODO 记录日志
+                .doOnNext(loginUser -> {
+                    // TODO 记录日志
+                    // 1 记录日志 2 合并流
+                })
                 .flatMap(tokenHandler::createToken)
                 .flatMap(super::success);
     }

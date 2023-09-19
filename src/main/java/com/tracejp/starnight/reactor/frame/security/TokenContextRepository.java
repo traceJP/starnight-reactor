@@ -2,6 +2,7 @@ package com.tracejp.starnight.reactor.frame.security;
 
 import com.tracejp.starnight.reactor.entity.base.LoginUser;
 import com.tracejp.starnight.reactor.entity.enums.RoleEnum;
+import com.tracejp.starnight.reactor.exception.ServiceException;
 import com.tracejp.starnight.reactor.handler.token.TokenHandler;
 import com.tracejp.starnight.reactor.utils.SecurityUtils;
 import com.tracejp.starnight.reactor.utils.StringUtils;
@@ -16,6 +17,7 @@ import org.springframework.security.web.server.context.ServerSecurityContextRepo
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +36,11 @@ public class TokenContextRepository implements ServerSecurityContextRepository {
 
     @Override
     public Mono<Void> save(ServerWebExchange exchange, SecurityContext context) {
-        System.out.println("这里 执行了！！！");
         return Mono.empty();
     }
 
     @Override
     public Mono<SecurityContext> load(ServerWebExchange exchange) {
-
-//        System.out.println("这里执行力！！！");
-
         var request = exchange.getRequest();
         var token = SecurityUtils.getToken(request);
 
@@ -51,12 +49,14 @@ public class TokenContextRepository implements ServerSecurityContextRepository {
             return Mono.empty();
         }
 
-        // token 验证
-        return tokenHandler.getLoginUser(token).flatMap(loginUser -> {
-            var authToken = buildToken(loginUser);
-            ReactiveSecurityContextHolder.withAuthentication(authToken);
-            return Mono.just(new SecurityContextImpl(buildToken(loginUser)));
-        });
+        Mono<UsernamePasswordAuthenticationToken> auth = tokenHandler.getLoginUser(token)
+                .flatMap(loginUser -> Mono.just(buildToken(loginUser)))
+                .doOnNext(ReactiveSecurityContextHolder::withAuthentication)
+                .switchIfEmpty(Mono.error(new ServiceException("token已过期")));
+
+        return Mono.zip(auth, Mono.just(new SecurityContextImpl()))
+                .doOnNext(tuple -> tuple.getT2().setAuthentication(tuple.getT1()))
+                .map(Tuple2::getT2);
     }
 
     /**

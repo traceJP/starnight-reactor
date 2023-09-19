@@ -4,14 +4,14 @@ package com.tracejp.starnight.reactor.handler.token;
 import com.tracejp.starnight.reactor.constants.SecurityConstants;
 import com.tracejp.starnight.reactor.entity.base.LoginUser;
 import com.tracejp.starnight.reactor.utils.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -19,11 +19,11 @@ import java.util.concurrent.TimeUnit;
  *
  * @author yozu
  */
+@RequiredArgsConstructor
 @Component
 public class TokenHandler {
 
-    @Autowired
-    private RedisUtils redisUtils;
+    private final RedisUtils redisUtils;
 
     private final static String ACCESS_TOKEN = "login_tokens:";
 
@@ -37,7 +37,7 @@ public class TokenHandler {
     public Mono<Map<String, Object>> createToken(LoginUser loginUser) {
         String token = IdUtils.fastUUID();
         loginUser.setToken(token);
-        refreshToken(loginUser);
+        Mono<Boolean> refresh = refreshToken(loginUser);
 
         // Jwt存储信息
         Map<String, Object> claimsMap = new HashMap<>();
@@ -49,7 +49,8 @@ public class TokenHandler {
         Map<String, Object> rspMap = new HashMap<>();
         rspMap.put("access_token", JwtUtils.createToken(claimsMap));
         rspMap.put("expires_in", EXPIRE_TIME);
-        return Mono.just(rspMap);
+        return Mono.zip(refresh, Mono.just(rspMap))
+                .map(Tuple2::getT2);
     }
 
     /**
@@ -67,13 +68,10 @@ public class TokenHandler {
      * @return 用户信息
      */
     public Mono<LoginUser> getLoginUser(String token) {
-        try {
-            if (StringUtils.isNotEmpty(token)) {
-                var userKey = JwtUtils.getUserKey(token);
-                return redisUtils.getCacheObject(getTokenKey(userKey))
-                        .cast(LoginUser.class);
-            }
-        } catch (Exception ignored) {
+        if (StringUtils.isNotEmpty(token)) {
+            var userKey = JwtUtils.getUserKey(token);
+            return redisUtils.getCacheObject(getTokenKey(userKey))
+                    .cast(LoginUser.class);
         }
         return Mono.empty();
     }
@@ -81,42 +79,45 @@ public class TokenHandler {
     /**
      * 设置用户身份信息
      */
-    public void setLoginUser(LoginUser loginUser) {
+    public Mono<Boolean> setLoginUser(LoginUser loginUser) {
         if (StringUtils.isNotNull(loginUser) && StringUtils.isNotEmpty(loginUser.getToken())) {
-            refreshToken(loginUser);
+            return refreshToken(loginUser);
         }
+        return Mono.just(false);
     }
 
     /**
      * 删除用户缓存信息
      */
-    public void delLoginUser(String token) {
+    public Mono<Long> delLoginUser(String token) {
         if (StringUtils.isNotEmpty(token)) {
-            String userkey = JwtUtils.getUserKey(token);
-            redisUtils.deleteObject(getTokenKey(userkey));
+            String userKey = JwtUtils.getUserKey(token);
+            return redisUtils.deleteObject(getTokenKey(userKey));
         }
+        return Mono.just(0L);
     }
 
     /**
      * 验证令牌有效期，相差不足120分钟，自动刷新缓存
      */
-    public void verifyToken(LoginUser loginUser) {
+    public Mono<Boolean> verifyToken(LoginUser loginUser) {
         long expireTime = loginUser.getExpireTime();
         long currentTime = System.currentTimeMillis();
         if (expireTime - currentTime <= REFRESH_TIME) {
-            refreshToken(loginUser);
+            return refreshToken(loginUser);
         }
+        return Mono.just(false);
     }
 
     /**
      * 刷新令牌有效期
      */
-    public void refreshToken(LoginUser loginUser) {
+    public Mono<Boolean> refreshToken(LoginUser loginUser) {
         loginUser.setLoginTime(System.currentTimeMillis());
         loginUser.setExpireTime(loginUser.getLoginTime() + EXPIRE_TIME * 60 * 1000);
         // 根据uuid将loginUser缓存
         String tokenKey = getTokenKey(loginUser.getToken());
-        redisUtils.setCacheObject(tokenKey, loginUser, EXPIRE_TIME, TimeUnit.MINUTES);
+        return redisUtils.setCacheObject(tokenKey, loginUser, EXPIRE_TIME, TimeUnit.MINUTES);
     }
 
     private String getTokenKey(String token) {

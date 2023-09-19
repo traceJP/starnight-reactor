@@ -1,6 +1,7 @@
 package com.tracejp.starnight.reactor.controller.admin;
 
 import com.tracejp.starnight.reactor.controller.BaseController;
+import com.tracejp.starnight.reactor.exception.ServiceException;
 import com.tracejp.starnight.reactor.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +34,7 @@ public class UserController extends BaseController {
         var pageNum = request.queryParams().get("pageNum").get(0);
         return userService.findPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize))
                 .flatMap(super::success);
+//        return Mono.defer(() -> Mono.error(new ServiceException("测试异常")));
     }
 
 }
