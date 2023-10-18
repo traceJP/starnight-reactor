@@ -1,5 +1,6 @@
 package com.tracejp.starnight.reactor.service.impl;
 
+import com.tracejp.starnight.reactor.entity.base.IQueryPageRequest;
 import com.tracejp.starnight.reactor.entity.base.PageDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.function.Supplier;
 
 /**
  * <p> 基础业务类 <p/>
@@ -52,20 +55,31 @@ public abstract class BaseService<Dao extends R2dbcRepository<Domain, Long>, Dom
     /**
      * 查询分页数据 - 手动分页
      */
-    public Mono<PageDomain<Domain>> findPage(Domain entity, int page, int size) {
-        var list = findList(entity);
-        var count = list.count();
-        if (page > 0) {
-            list = list.skip(((long) (page - 1)) * (long) size);
+    public Mono<PageDomain<Domain>> findList(IQueryPageRequest<Domain> page) {
+        var list = findList(page.toEntity());
+        if (page.getPageNum() > 0) {
+            list = list.skip(((long) (page.getPageNum() - 1)) * (long) page.getPageSize());
         }
-        if (size > 0) {
-            list = list.take(size);
+        if (page.getPageSize() > 0) {
+            list = list.take(page.getPageSize());
         }
-        return list.collectList().zipWith(count)
+        return list.collectList().zipWith(list.count())
                 .map(tuple -> {
                     var content = tuple.getT1();
                     var total = tuple.getT2();
-                    return new PageDomain<>(page, size, total, content);
+                    return new PageDomain<>(page.getPageNum(), page.getPageSize(), total, content);
+                });
+    }
+
+    /**
+     * 获取分页数据 - 复杂分页
+     */
+    public Mono<PageDomain<Domain>> getPageDomain(Supplier<Flux<Domain>> list, IQueryPageRequest<Domain> page) {
+        return list.get().collectList().zipWith(dao.count())
+                .map(tuple -> {
+                    var content = tuple.getT1();
+                    var total = tuple.getT2();
+                    return new PageDomain<>(page.getPageNum(), page.getPageSize(), total, content);
                 });
     }
 

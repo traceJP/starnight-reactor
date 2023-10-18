@@ -52,17 +52,17 @@ public class SecurityConfig {
                 .logout(ServerHttpSecurity.LogoutSpec::disable)
                 .headers(item -> item.frameOptions(ServerHttpSecurity.HeaderSpec.FrameOptionsSpec::disable))
                 .securityContextRepository(tokenContextRepository)
-//                .authorizeExchange(auth -> auth.anyExchange().permitAll())  // 测试放行
-                .authorizeExchange(auth -> auth
-                        // 白名单接口放行
-                        .pathMatchers(securityIgnoreUrls.toArray(new String[0])).permitAll()
-                        // admin 接口鉴权
-                        .pathMatchers("/api/admin/**").hasRole(RoleEnum.ADMIN.getName())
-                        // student 接口鉴权
-                        .pathMatchers("/api/student/**").hasRole(RoleEnum.STUDENT.getName())
-                        // global 接口认证
-                        .anyExchange().authenticated()
-                )
+                .authorizeExchange(auth -> auth.anyExchange().permitAll())  // 测试放行
+//                .authorizeExchange(auth -> auth
+//                        // 白名单接口放行
+//                        .pathMatchers(securityIgnoreUrls.toArray(new String[0])).permitAll()
+//                        // admin 接口鉴权
+//                        .pathMatchers("/api/admin/**").hasRole(RoleEnum.ADMIN.getName())
+//                        // student 接口鉴权
+//                        .pathMatchers("/api/student/**").hasRole(RoleEnum.STUDENT.getName())
+//                        // global 接口认证
+//                        .anyExchange().authenticated()
+//                )
                 .exceptionHandling(auth -> auth
                         // 未登录异常处理
                         .authenticationEntryPoint(restAuthEntryPoint)

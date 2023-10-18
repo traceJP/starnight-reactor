@@ -3,6 +3,7 @@ package com.tracejp.starnight.reactor.service.impl;
 import com.tracejp.starnight.reactor.dao.UserDao;
 import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.base.PageDomain;
+import com.tracejp.starnight.reactor.entity.param.UserQuery;
 import com.tracejp.starnight.reactor.exception.ServiceException;
 import com.tracejp.starnight.reactor.service.IUserService;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,8 @@ import reactor.core.publisher.Mono;
 public class UserServiceImpl extends BaseService<UserDao, UserEntity> implements IUserService {
 
     @Override
-    public Mono<PageDomain<UserEntity>> findPage(int pageNum, int pageSize) {
-        return findPage(new UserEntity(), pageNum, pageSize);
+    public Mono<PageDomain<UserEntity>> findPage(UserQuery userQuery) {
+        return findList(userQuery);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.tracejp.starnight.reactor.controller.admin;
 
 import com.tracejp.starnight.reactor.controller.BaseController;
-import com.tracejp.starnight.reactor.exception.ServiceException;
+import com.tracejp.starnight.reactor.entity.param.UserQuery;
 import com.tracejp.starnight.reactor.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,15 +26,14 @@ public class UserController extends BaseController {
     @Override
     public RouterFunction<ServerResponse> endpoint() {
         return RouterFunctions.route()
-                .GET("/admin/user/page", this::listStudent).build();
+                .GET("/admin/user/page", this::pageUser)
+                .build();
     }
 
-    public Mono<ServerResponse> listStudent(ServerRequest request) {
-//        var pageSize = request.queryParams().get("pageSize").get(0);
-//        var pageNum = request.queryParams().get("pageNum").get(0);
-//        return userService.findPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize))
-//                .flatMap(super::success);
-        return success("Hello World!");
+
+    public Mono<ServerResponse> pageUser(ServerRequest request) {
+        UserQuery userQuery = new UserQuery(request.queryParams());
+        return userService.findPage(userQuery).flatMap(super::success);
     }
 
 }

@@ -2,6 +2,7 @@ package com.tracejp.starnight.reactor.service;
 
 import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.base.PageDomain;
+import com.tracejp.starnight.reactor.entity.param.UserQuery;
 import reactor.core.publisher.Mono;
 
 /**
@@ -12,8 +13,7 @@ import reactor.core.publisher.Mono;
  */
 public interface IUserService {
 
-    // TODO: 2023/9/13 10:32 这个分页方式属实有点呆逼
-    Mono<PageDomain<UserEntity>> findPage(int pageNum, int pageSize);
+    Mono<PageDomain<UserEntity>> findPage(UserQuery userQuery);
 
     /**
      * 通过用户名查询用户实体

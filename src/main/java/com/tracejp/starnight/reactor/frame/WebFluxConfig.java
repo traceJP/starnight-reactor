@@ -18,7 +18,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 @Configuration
 public class WebFluxConfig {
 
-    @Value("${server.servlet.context-path}")
+    @Value("${server.context-path}")
     private final String contextPath = "/api";
 
     @Bean
