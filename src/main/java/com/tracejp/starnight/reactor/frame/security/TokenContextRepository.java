@@ -2,11 +2,10 @@ package com.tracejp.starnight.reactor.frame.security;
 
 import com.tracejp.starnight.reactor.entity.base.LoginUser;
 import com.tracejp.starnight.reactor.entity.enums.RoleEnum;
-import com.tracejp.starnight.reactor.exception.ServiceException;
 import com.tracejp.starnight.reactor.handler.token.TokenHandler;
 import com.tracejp.starnight.reactor.utils.SecurityUtils;
-import com.tracejp.starnight.reactor.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>  <p/>
+ * <p> Token验证 <p/>
  *
  * @author traceJP
  * @since 2023/9/15 14:50
@@ -44,15 +43,10 @@ public class TokenContextRepository implements ServerSecurityContextRepository {
         var request = exchange.getRequest();
         var token = SecurityUtils.getToken(request);
 
-        // 匿名请求
-        if (StringUtils.isEmpty(token)) {
-            return Mono.empty();
-        }
-
         Mono<UsernamePasswordAuthenticationToken> auth = tokenHandler.getLoginUser(token)
                 .flatMap(loginUser -> Mono.just(buildToken(loginUser)))
                 .doOnNext(ReactiveSecurityContextHolder::withAuthentication)
-                .switchIfEmpty(Mono.error(new ServiceException("token已过期")));
+                .switchIfEmpty(Mono.error(new BadCredentialsException("Token验证失败")));
 
         return Mono.zip(auth, Mono.just(new SecurityContextImpl()))
                 .doOnNext(tuple -> tuple.getT2().setAuthentication(tuple.getT1()))

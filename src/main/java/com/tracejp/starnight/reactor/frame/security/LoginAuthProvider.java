@@ -8,20 +8,17 @@ import com.tracejp.starnight.reactor.service.IUserService;
 import com.tracejp.starnight.reactor.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * <p> 认证 <p/>
@@ -45,7 +42,7 @@ public class LoginAuthProvider implements ReactiveAuthenticationManager {
         return userService.findByUserName(username).flatMap(user -> {
 
             if (user == null) {
-                return Mono.error(new UsernameNotFoundException("用户名或密码错误"));
+                return Mono.error(new BadCredentialsException("用户名或密码错误"));
             }
 
             if (user.getRole() != role.getCode()) {
@@ -59,7 +56,7 @@ public class LoginAuthProvider implements ReactiveAuthenticationManager {
 
             UserStatusEnum userStatusEnum = UserStatusEnum.fromCode(user.getStatus());
             if (UserStatusEnum.Disable == userStatusEnum) {
-                return Mono.error(new LockedException("用户被禁用"));
+                return Mono.error(new BadCredentialsException("用户被禁用"));
             }
 
             // 登录成功

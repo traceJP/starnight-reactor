@@ -30,11 +30,11 @@ public class UserController extends BaseController {
     }
 
     public Mono<ServerResponse> listStudent(ServerRequest request) {
-        var pageSize = request.queryParams().get("pageSize").get(0);
-        var pageNum = request.queryParams().get("pageNum").get(0);
-        return userService.findPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize))
-                .flatMap(super::success);
-//        return Mono.defer(() -> Mono.error(new ServiceException("测试异常")));
+//        var pageSize = request.queryParams().get("pageSize").get(0);
+//        var pageNum = request.queryParams().get("pageNum").get(0);
+//        return userService.findPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize))
+//                .flatMap(super::success);
+        return success("Hello World!");
     }
 
 }

@@ -3,6 +3,8 @@ package com.tracejp.starnight.reactor.frame;
 
 import com.tracejp.starnight.reactor.entity.enums.RoleEnum;
 import com.tracejp.starnight.reactor.frame.properties.SecurityConfigProperties;
+import com.tracejp.starnight.reactor.frame.security.RestAccessDeniedHandler;
+import com.tracejp.starnight.reactor.frame.security.RestAuthEntryPoint;
 import com.tracejp.starnight.reactor.frame.security.TokenContextRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,6 +32,10 @@ public class SecurityConfig {
 
     private final TokenContextRepository tokenContextRepository;
 
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
+
+    private final RestAuthEntryPoint restAuthEntryPoint;
+
     /**
      * Security 配置
      */
@@ -56,6 +62,12 @@ public class SecurityConfig {
                         .pathMatchers("/api/student/**").hasRole(RoleEnum.STUDENT.getName())
                         // global 接口认证
                         .anyExchange().authenticated()
+                )
+                .exceptionHandling(auth -> auth
+                        // 未登录异常处理
+                        .authenticationEntryPoint(restAuthEntryPoint)
+                        // 无权限异常处理
+                        .accessDeniedHandler(restAccessDeniedHandler)
                 )
                 .build();
     }

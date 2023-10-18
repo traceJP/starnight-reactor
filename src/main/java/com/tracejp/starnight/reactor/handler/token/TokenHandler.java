@@ -68,10 +68,13 @@ public class TokenHandler {
      * @return 用户信息
      */
     public Mono<LoginUser> getLoginUser(String token) {
-        if (StringUtils.isNotEmpty(token)) {
-            var userKey = JwtUtils.getUserKey(token);
-            return redisUtils.getCacheObject(getTokenKey(userKey))
-                    .cast(LoginUser.class);
+        try {
+            if (StringUtils.isNotEmpty(token)) {
+                var userKey = JwtUtils.getUserKey(token);
+                return redisUtils.getCacheObject(getTokenKey(userKey))
+                        .cast(LoginUser.class);
+            }
+        } catch (Exception ignored) {
         }
         return Mono.empty();
     }
