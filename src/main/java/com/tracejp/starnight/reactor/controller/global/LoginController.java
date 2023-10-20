@@ -4,6 +4,7 @@ import com.tracejp.starnight.reactor.controller.BaseController;
 import com.tracejp.starnight.reactor.entity.base.LoginUser;
 import com.tracejp.starnight.reactor.entity.param.LoginParam;
 import com.tracejp.starnight.reactor.handler.token.TokenHandler;
+import com.tracejp.starnight.reactor.service.IUserEventLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -28,6 +29,8 @@ public class LoginController extends BaseController {
 
     private final ReactiveAuthenticationManager authorizationManager;
 
+    private final IUserEventLogService userEventLogService;
+
     @Override
     public RouterFunction<ServerResponse> endpoint() {
         return RouterFunctions.route()
@@ -43,11 +46,8 @@ public class LoginController extends BaseController {
                 .flatMap(loginParam -> authorizationManager.authenticate(loginParam.getAuthenticationToken()))
                 .map(Authentication::getDetails)
                 .cast(LoginUser.class)
-                .doOnNext(loginUser -> {
-                    // TODO 记录日志
-                    // 1 记录日志 2 合并流
-                })
-                .flatMap(tokenHandler::createToken)
+                .flatMap(loginUser -> userEventLogService.save(loginUser.getUser(), "登录成功")
+                        .then(tokenHandler.createToken(loginUser)))
                 .flatMap(super::success);
     }
 
