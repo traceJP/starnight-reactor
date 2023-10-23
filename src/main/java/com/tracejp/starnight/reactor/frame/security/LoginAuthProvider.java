@@ -39,7 +39,7 @@ public class LoginAuthProvider implements ReactiveAuthenticationManager {
         RoleEnum role = (RoleEnum) authentication.getDetails();
 
         // 登录检查
-        return userService.findByUserName(username).flatMap(user -> {
+        return userService.getByUserName(username).flatMap(user -> {
 
             if (user == null) {
                 return Mono.error(new BadCredentialsException("用户名或密码错误"));

@@ -16,14 +16,16 @@ spring:
       port: 6379
       password: 123456
       database: 1
+  # es
+  elasticsearch:
+    uris: http://localhost:9200
+    username: elasticsearch
+    password: 123456
+
   # 时间戳统一转换
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
-  # 文件上传大小限制
-  servlet:
-    multipart:
-      max-file-size: 10MB
 
 # r2dbc 日志
 logging:

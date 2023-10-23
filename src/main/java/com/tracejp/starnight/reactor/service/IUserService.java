@@ -18,11 +18,16 @@ public interface IUserService {
     /**
      * 通过用户名查询用户实体
      */
-    Mono<UserEntity> findByUserName(String username);
+    Mono<UserEntity> getByUserName(String username);
 
     /**
      * 通过用户ID修改用户实体
      */
     Mono<UserEntity> updateById(UserEntity user);
+
+    /**
+     * 保存用户 - 级联保存
+     */
+    Mono<Void> saveToAll(UserEntity user);
 
 }

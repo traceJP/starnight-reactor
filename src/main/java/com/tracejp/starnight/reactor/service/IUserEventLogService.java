@@ -15,16 +15,16 @@ public interface IUserEventLogService {
     /**
      * 异步保存
      */
-    Mono<Boolean> save(UserEventLogEntity userEventLogEntity);
+    Mono<Boolean> saveAsync(UserEventLogEntity userEventLogEntity);
 
     /**
      * 异步保存
      */
-    Mono<Boolean> save(UserEntity user, String content);
+    Mono<Boolean> saveAsync(UserEntity user, String content);
 
     /**
      * 异步保存当前用户的事件日志
      */
-    Mono<Boolean> save(String content);
+    Mono<Boolean> saveAsync(String content);
 
 }
