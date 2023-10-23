@@ -26,8 +26,8 @@ public interface IUserService {
     Mono<UserEntity> updateById(UserEntity user);
 
     /**
-     * 保存用户 - 级联保存
+     * 保存/更新 用户 - 级联保存
      */
-    Mono<Void> saveToAll(UserEntity user);
+    Mono<Void> editToAll(UserEntity user);
 
 }

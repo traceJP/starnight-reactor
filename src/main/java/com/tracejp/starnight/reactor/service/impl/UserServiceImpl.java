@@ -45,9 +45,9 @@ public class UserServiceImpl extends BaseService<UserDao, UserEntity> implements
 
     @Transactional
     @Override
-    public Mono<Void> saveToAll(UserEntity user) {
-        Mono<UserEntity> daoMono = saveOrUpdate(user);
-        Mono<SearchUserDto> esMono = userDtoSearchRepository.save(new SearchUserDto().convertFrom(user));
+    public Mono<Void> editToAll(UserEntity user) {
+        var daoMono = saveOrUpdate(user);
+        var esMono = userDtoSearchRepository.save(new SearchUserDto().convertFrom(user));
         return Mono.when(daoMono, esMono).then();
     }
 

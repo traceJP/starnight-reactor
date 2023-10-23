@@ -36,6 +36,12 @@ logging:
 
 # star-night 配置
 starnight:
+  # 文件处理器
+  file:
+    url: localhost:9000
+    access-key: 123456
+    secret-key: 123456
+    bucket-name: starnight
   # security
   security:
     ignores:

@@ -1,7 +1,6 @@
 package com.tracejp.starnight.reactor.controller.global;
 
 import com.tracejp.starnight.reactor.controller.BaseController;
-import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.base.LoginUser;
 import com.tracejp.starnight.reactor.entity.enums.RoleEnum;
 import com.tracejp.starnight.reactor.entity.enums.UserStatusEnum;
@@ -64,9 +63,9 @@ public class LoginController extends BaseController {
     }
 
     public Mono<ServerResponse> logout(ServerRequest request) {
-        String token = SecurityUtils.getToken(request.exchange().getRequest());
+        var token = SecurityUtils.getToken(request.exchange().getRequest());
         if (StringUtils.isNotEmpty(token)) {
-            String username = JwtUtils.getUserName(token);
+            var username = JwtUtils.getUserName(token);
             return tokenHandler.delLoginUser(token)
                     .doOnSuccess(ignored -> logger.info("用户登出，username：{}", username))
                     .flatMap(super::success);
@@ -79,12 +78,12 @@ public class LoginController extends BaseController {
                 .flatMap(param -> userService.getByUserName(param.userName())
                         .flatMap(user -> error("用户名已存在"))
                         .switchIfEmpty(Mono.defer(() -> {
-                            UserEntity user = param.convertTo()
+                            var user = param.convertTo()
                                     .setPassword(SecurityUtils.encryptPassword(param.password()))
                                     .setUserUuid(UUIDUtils.randomUUID().toString())
                                     .setStatus(UserStatusEnum.Enable.getCode())
                                     .setRole(RoleEnum.STUDENT.getCode());
-                            return userService.saveToAll(user).then(success());
+                            return userService.editToAll(user).then(success());
                         }))
                 );
     }
