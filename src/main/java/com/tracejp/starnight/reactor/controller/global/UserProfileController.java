@@ -79,7 +79,7 @@ public class UserProfileController extends BaseController {
                                 return tokenHandler.setLoginUser(loginUser);
                             }));
                 })
-                .flatMap(super::success);
+                .then(super.success());
     }
 
     private Mono<ServerResponse> updatePwd(ServerRequest request) {
@@ -111,7 +111,7 @@ public class UserProfileController extends BaseController {
                                         .flatMap(tokenHandler::setLoginUser);
                             });
                 })
-                .flatMap(super::success);
+                .then(super.success());
     }
 
     private Mono<ServerResponse> avatar(ServerRequest request) {
@@ -143,7 +143,7 @@ public class UserProfileController extends BaseController {
                                             return tokenHandler.setLoginUser(loginUser);
                                         });
                             })
-                            .flatMap(super::success);
+                            .then(super.success());
                 });
     }
 

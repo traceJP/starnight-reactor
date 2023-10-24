@@ -16,8 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,14 +42,14 @@ public class MinioFileHandler implements IFileHandler {
     public Mono<String> uploadFile(MultipartFile file) {
         return Mono.fromCallable(() -> {
             // 时间 + 随机数 + 后缀
-            String suffix = FileNameUtil.getSuffix(file.getOriginalFilename());
+            var suffix = FileNameUtil.getSuffix(file.getOriginalFilename());
             if (StringUtils.isEmpty(suffix)) {
                 suffix = MimeTypeUtils.getExtension(Objects.requireNonNull(file.getContentType()));
             }
-            String fileKey = DateUtil.format(new Date(), "yyyyMM")
+            var fileKey = DateUtil.format(new Date(), "yyyyMM")
                     + "_" + UUIDUtils.fastUUID().toString(true)
                     + "." + suffix;
-            InputStream inputStream = file.getInputStream();
+            var inputStream = file.getInputStream();
             fileClient.putObject(configProperties.getBucketName(), fileKey, inputStream, null);
             inputStream.close();
             return getFileUrl(fileKey, configProperties.getBucketName());
@@ -61,15 +59,15 @@ public class MinioFileHandler implements IFileHandler {
     @Override
     public Mono<Map<String, String>> uploadPreSign(String fileKey, Map<String, String> params) {
         return Mono.fromCallable(() -> {
-            Date currentDate = new Date();
-            Date expireDate = DateUtil.offsetMillisecond(currentDate, PRE_SIGN_URL_EXPIRE);
-            GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(configProperties.getBucketName(), fileKey)
+            var currentDate = new Date();
+            var expireDate = DateUtil.offsetMillisecond(currentDate, PRE_SIGN_URL_EXPIRE);
+            var request = new GeneratePresignedUrlRequest(configProperties.getBucketName(), fileKey)
                     .withExpiration(expireDate)
                     .withMethod(HttpMethod.PUT);
             if (params != null) {
                 params.forEach(request::addRequestParameter);
             }
-            URL url = fileClient.generatePresignedUrl(request);
+            var url = fileClient.generatePresignedUrl(request);
             Map<String, String> resultMap = new HashMap<>();
             resultMap.put("url", url.toString());
             resultMap.put("preview", getFileUrl(fileKey, configProperties.getBucketName()));
