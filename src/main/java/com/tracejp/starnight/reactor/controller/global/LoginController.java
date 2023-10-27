@@ -50,7 +50,7 @@ public class LoginController extends BaseController {
                 .build();
     }
 
-    public Mono<ServerResponse> login(ServerRequest request) {
+    private Mono<ServerResponse> login(ServerRequest request) {
         return request.bodyToMono(LoginParam.class)
                 .flatMap(loginParam -> authorizationManager.authenticate(loginParam.getAuthenticationToken()))
                 .map(Authentication::getDetails)
@@ -62,7 +62,7 @@ public class LoginController extends BaseController {
                 .flatMap(super::success);
     }
 
-    public Mono<ServerResponse> logout(ServerRequest request) {
+    private Mono<ServerResponse> logout(ServerRequest request) {
         var token = SecurityUtils.getToken(request.exchange().getRequest());
         if (StringUtils.isNotEmpty(token)) {
             var username = JwtUtils.getUserName(token);
@@ -73,7 +73,7 @@ public class LoginController extends BaseController {
         return success();
     }
 
-    public Mono<ServerResponse> register(ServerRequest request) {
+    private Mono<ServerResponse> register(ServerRequest request) {
         return request.bodyToMono(RegisterParam.class)
                 .flatMap(param -> userService.getByUserName(param.userName())
                         .flatMap(user -> error("用户名已存在"))

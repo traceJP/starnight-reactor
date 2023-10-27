@@ -13,7 +13,10 @@ import reactor.core.publisher.Mono;
  */
 public interface IUserService {
 
-    Mono<PageDomain<UserEntity>> findPage(UserQuery userQuery);
+    /**
+     * 列表
+     */
+    Mono<PageDomain<UserEntity>> listPage(UserQuery userQuery);
 
     /**
      * 通过用户名查询用户实体

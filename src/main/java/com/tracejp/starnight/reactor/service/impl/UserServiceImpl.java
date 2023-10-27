@@ -26,8 +26,8 @@ public class UserServiceImpl extends BaseService<UserDao, UserEntity> implements
     private final UserDtoSearchRepository userDtoSearchRepository;
 
     @Override
-    public Mono<PageDomain<UserEntity>> findPage(UserQuery userQuery) {
-        return findList(userQuery);
+    public Mono<PageDomain<UserEntity>> listPage(UserQuery userQuery) {
+        return getPageDomain(() -> dao.listPage(userQuery, userQuery.getPageRequest()), userQuery);
     }
 
     @Override

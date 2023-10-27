@@ -17,8 +17,8 @@ import reactor.core.publisher.Mono;
  * @author traceJP
  * @since 2023/9/18 16:45
  */
-@Component
-@Order(-2)
+//@Component
+//@Order(-2)
 public class GlobalExceptionController extends AbstractErrorWebExceptionHandler {
 
     public GlobalExceptionController(ErrorAttributes errorAttributes,

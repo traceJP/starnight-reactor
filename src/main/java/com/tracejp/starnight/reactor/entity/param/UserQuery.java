@@ -20,11 +20,30 @@ public class UserQuery extends IQueryPageRequest.QueryPageRequest<UserEntity> {
         return queryParams.getFirst("userName");
     }
 
+    public String getRealName() {
+        return queryParams.getFirst("realName");
+    }
+
+    public String getPhone() {
+        return queryParams.getFirst("phone");
+    }
+
+    public Integer getRole() {
+        String role = queryParams.getFirst("role");
+        if (role == null) {
+            return null;
+        }
+        return Integer.parseInt(role);
+    }
+
 
     @Override
     public UserEntity toEntity() {
         return new UserEntity()
-                .setUserName(getUserName());
+                .setUserName(getUserName())
+                .setRealName(getRealName())
+                .setPhone(getPhone())
+                .setRole(getRole());
     }
 
 }

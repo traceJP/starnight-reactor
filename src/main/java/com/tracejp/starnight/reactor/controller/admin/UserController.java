@@ -26,14 +26,14 @@ public class UserController extends BaseController {
     @Override
     public RouterFunction<ServerResponse> endpoint() {
         return RouterFunctions.route()
-                .GET("/admin/user/page", this::pageUser)
+                // 列表
+                .GET("/admin/user/list", this::list)
                 .build();
     }
 
-
-    public Mono<ServerResponse> pageUser(ServerRequest request) {
+    public Mono<ServerResponse> list(ServerRequest request) {
         UserQuery userQuery = new UserQuery(request.queryParams());
-        return userService.findPage(userQuery).flatMap(super::success);
+        return userService.listPage(userQuery).flatMap(super::success);
     }
 
 }
