@@ -1,4 +1,4 @@
-package com.tracejp.starnight.reactor.entity.param;
+package com.tracejp.starnight.reactor.entity.param.query;
 
 import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.base.IQueryPageRequest;

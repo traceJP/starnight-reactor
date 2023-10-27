@@ -2,6 +2,8 @@ package com.tracejp.starnight.reactor.service;
 
 import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.UserEventLogEntity;
+import com.tracejp.starnight.reactor.entity.base.PageDomain;
+import com.tracejp.starnight.reactor.entity.param.query.UserEventLogQuery;
 import reactor.core.publisher.Mono;
 
 /**
@@ -12,19 +14,12 @@ import reactor.core.publisher.Mono;
  */
 public interface IUserEventLogService {
 
-    /**
-     * 异步保存
-     */
     Mono<Boolean> saveAsync(UserEventLogEntity userEventLogEntity);
 
-    /**
-     * 异步保存
-     */
     Mono<Boolean> saveAsync(UserEntity user, String content);
 
-    /**
-     * 异步保存当前用户的事件日志
-     */
     Mono<Boolean> saveAsync(String content);
+
+    Mono<PageDomain<UserEventLogEntity>> listPage(UserEventLogQuery query);
 
 }

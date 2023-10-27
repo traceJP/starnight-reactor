@@ -43,6 +43,6 @@ public interface UserDtoSearchRepository extends ReactiveElasticsearchRepository
                 }
             }
             """)
-    Flux<SearchUserDto> searchByKeyword(String keyword);
+    Flux<SearchUserDto> searchByKeyword(String keyword, Pageable pageable);
 
 }

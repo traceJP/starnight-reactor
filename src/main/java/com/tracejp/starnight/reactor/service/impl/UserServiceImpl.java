@@ -4,11 +4,12 @@ import com.tracejp.starnight.reactor.dao.UserDao;
 import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.base.PageDomain;
 import com.tracejp.starnight.reactor.entity.dto.SearchUserDto;
-import com.tracejp.starnight.reactor.entity.param.UserQuery;
+import com.tracejp.starnight.reactor.entity.param.query.UserQuery;
 import com.tracejp.starnight.reactor.exception.ServiceException;
 import com.tracejp.starnight.reactor.search.UserDtoSearchRepository;
 import com.tracejp.starnight.reactor.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -54,8 +55,6 @@ public class UserServiceImpl extends BaseService<UserDao, UserEntity> implements
         return saveOrUpdate(user)
                 .flatMap(res -> {
                     SearchUserDto dto = new SearchUserDto().convertFrom(res);
-                    // TODO 这里不是根据 sql的id修改的，而是根据es的id修改的
-                    // 导致如果找到了记录，会出现 Failed to convert from type [java.lang.String] to type [java.lang.Long] for value [atYUcIsBdJhYXFSvYB5c]
                     return userDtoSearchRepository.save(dto);
                 })
                 .then();
@@ -68,8 +67,7 @@ public class UserServiceImpl extends BaseService<UserDao, UserEntity> implements
 
     @Override
     public Flux<SearchUserDto> searchDtoByKeyword(String keyword) {
-        // , PageRequest.of(0, 10)
-        return userDtoSearchRepository.searchByKeyword(keyword);
+        return userDtoSearchRepository.searchByKeyword(keyword, PageRequest.of(0, 10));
     }
 
     @Override

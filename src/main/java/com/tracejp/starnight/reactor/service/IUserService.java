@@ -3,7 +3,7 @@ package com.tracejp.starnight.reactor.service;
 import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.base.PageDomain;
 import com.tracejp.starnight.reactor.entity.dto.SearchUserDto;
-import com.tracejp.starnight.reactor.entity.param.UserQuery;
+import com.tracejp.starnight.reactor.entity.param.query.UserQuery;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

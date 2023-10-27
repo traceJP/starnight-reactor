@@ -3,6 +3,8 @@ package com.tracejp.starnight.reactor.service.impl;
 import com.tracejp.starnight.reactor.dao.UserEventLogDao;
 import com.tracejp.starnight.reactor.entity.UserEntity;
 import com.tracejp.starnight.reactor.entity.UserEventLogEntity;
+import com.tracejp.starnight.reactor.entity.base.PageDomain;
+import com.tracejp.starnight.reactor.entity.param.query.UserEventLogQuery;
 import com.tracejp.starnight.reactor.service.IUserEventLogService;
 import com.tracejp.starnight.reactor.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,11 @@ public class UserEventLogServiceImpl extends BaseService<UserEventLogDao, UserEv
     public Mono<Boolean> saveAsync(String content) {
         return SecurityUtils.getLoginUser()
                 .flatMap(loginUser -> saveAsync(loginUser.getUser(), content));
+    }
+
+    @Override
+    public Mono<PageDomain<UserEventLogEntity>> listPage(UserEventLogQuery query) {
+        return findList(query);
     }
 
 }

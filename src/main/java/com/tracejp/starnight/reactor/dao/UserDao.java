@@ -1,7 +1,7 @@
 package com.tracejp.starnight.reactor.dao;
 
 import com.tracejp.starnight.reactor.entity.UserEntity;
-import com.tracejp.starnight.reactor.entity.param.UserQuery;
+import com.tracejp.starnight.reactor.entity.param.query.UserQuery;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

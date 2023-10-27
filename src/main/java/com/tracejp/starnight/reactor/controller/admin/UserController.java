@@ -6,7 +6,7 @@ import com.tracejp.starnight.reactor.entity.base.PageDomain;
 import com.tracejp.starnight.reactor.entity.dto.UserDto;
 import com.tracejp.starnight.reactor.entity.enums.UserStatusEnum;
 import com.tracejp.starnight.reactor.entity.param.UserEditParam;
-import com.tracejp.starnight.reactor.entity.param.UserQuery;
+import com.tracejp.starnight.reactor.entity.param.query.UserQuery;
 import com.tracejp.starnight.reactor.service.IUserService;
 import com.tracejp.starnight.reactor.utils.SecurityUtils;
 import com.tracejp.starnight.reactor.utils.StringUtils;
@@ -30,7 +30,7 @@ import java.util.List;
  * @since 2023/9/13 9:08
  */
 @RequiredArgsConstructor
-@RestController("adminUserController")
+@RestController
 public class UserController extends BaseController {
 
     private final IUserService userService;
