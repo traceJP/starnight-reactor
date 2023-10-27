@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
  * <p> 用户搜索实体 <p/>
@@ -28,21 +30,25 @@ public class SearchUserDto implements IOutputConverter<SearchUserDto, UserEntity
      * 自增 id
      */
     @Id
+    @Field(type = FieldType.Long)
     private Long id;
 
     /**
      * 用户名
      */
+    @Field(type = FieldType.Keyword)
     private String userName;
 
     /**
      * 真实姓名
      */
+    @Field(type = FieldType.Keyword)
     private String realName;
 
     /**
      * 手机号
      */
+    @Field(type = FieldType.Text)
     private String phone;
 
 }

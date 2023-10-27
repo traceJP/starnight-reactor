@@ -21,24 +21,21 @@ public interface UserDtoSearchRepository extends ReactiveElasticsearchRepository
                         {
                             "match": {
                                 "userName": {
-                                    "query": ":keyword",
-                                    "boost": 3
+                                    "query": "?0"
                                 }
                             }
                         },
                         {
                             "match": {
                                 "nickName": {
-                                    "query": ":keyword",
-                                    "boost": 2
+                                    "query": "?0"
                                 }
                             }
                         },
                         {
                             "match": {
                                 "phone": {
-                                    "query": ":keyword",
-                                    "boost": 1
+                                    "query": "?0"
                                 }
                             }
                         }
@@ -46,6 +43,6 @@ public interface UserDtoSearchRepository extends ReactiveElasticsearchRepository
                 }
             }
             """)
-    Flux<SearchUserDto> searchByKeyword(String keyword, Pageable pageable);
+    Flux<SearchUserDto> searchByKeyword(String keyword);
 
 }
